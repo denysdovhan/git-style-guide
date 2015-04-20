@@ -1,253 +1,256 @@
-# Git Style Guide
+# Керівництво по розробки з Git (Git Style Guide)
 
-This is a Git Style Guide inspired by [*How to Get Your Change Into the Linux
-Kernel*](https://www.kernel.org/doc/Documentation/SubmittingPatches),
-the [git man pages](http://git-scm.com/doc) and various practices popular
-among the community.
+Це керівництво по розробці з Git навіяне статтею [*Як додати свої зміни в ядро Linux*](https://www.kernel.org/doc/Documentation/SubmittingPatches) (*How to Get Your Change Into the Linux Kernel*), інформацією з [сторінок довідки git](http://git-scm.com/doc) та інших практик, які популярні серед спільноти.
 
-Translations of the guide are available in the following languages:
+Переклади керівництва доступні на таких мовах:
 
-* [Chinese (Simplified)](https://github.com/aseaday/git-style-guide)
-* [Chinese (Traditional)](https://github.com/JuanitoFatas/git-style-guide)
-* [Japanese](https://github.com/objectx/git-style-guide)
-* [Korean](https://github.com/ikaruce/git-style-guide)
-* [Portuguese](https://github.com/guylhermetabosa/git-style-guide)
+* [Англійська](https://github.com/agis-/git-style-guide)
+* [Китайська (Спрощена)](https://github.com/aseaday/git-style-guide)
+* [Китайська (Традиційна)](https://github.com/JuanitoFatas/git-style-guide)
+* [Японська](https://github.com/objectx/git-style-guide)
+* [Корейська](https://github.com/ikaruce/git-style-guide)
+* [Португальська](https://github.com/guylhermetabosa/git-style-guide)
 
-If you feel like contributing, please do so! Fork the project and open a pull
-request.
+Якщо хочете зробити переклад, зробіть його! Форкніть проект та відкрийте pull-request!
 
-# Table of contents
+# Зміст
 
-1. [Branches](#branches)
-2. [Commits](#commits)
-  1. [Messages](#messages)
-3. [Merging](#merging)
-4. [Misc.](#misc)
+1. [Гілки](#%D0%93%D1%96%D0%BB%D0%BA%D0%B8)
+2. [Коміти](#Коміти)
+  1. [Повідомлення](#Повідомлення)
+3. [Злиття](#Злиття)
+4. [Інше.](#Інше)
 
-## Branches
+## Гілки
 
-* Choose *short* and *descriptive* names:
+* Оберіть *коротке* та *змістовне* ім’я:
 
   ```shell
-  # good
+  # добре
   $ git checkout -b oauth-migration
 
-  # bad - too vague
+  # погано - надто абстрактно
   $ git checkout -b login_fix
   ```
 
-* Identifiers from corresponding tickets in an external service (eg. a GitHub
-  issue) are also good candidates for use in branch names. For example:
+* Ідентифікатори завдань із зовнішніх сервісів (напр. GitHub
+  Issue) добре підійдуть в якості назв для гілок. Наприклад:
 
   ```shell
   # GitHub issue #15
   $ git checkout -b issue-15
   ```
 
-* Use *dashes* to separate words.
+* Використовуйте *дефіс* в якості роздільника слів.
 
-* When several people are working on the *same* feature, it might be convenient
-  to have *personal* feature branches and a *team-wide* feature branch.
-  Use the following naming convention:
+* Коли кілька людей працюють над *тим самим* функціоналом, буде зручно, якщо
+  кожен матиме власну *персональну* гілку та одну *спільну* гілку.
+  Використовуйте таке найменування:
 
   ```shell
-  $ git checkout -b feature-a/master # team-wide branch
-  $ git checkout -b feature-a/maria  # Maria's personal branch
-  $ git checkout -b feature-a/nick   # Nick's personal branch
+  $ git checkout -b feature-a/master # спільна гілка
+  $ git checkout -b feature-a/maria  # Персональна гілка Марії
+  $ git checkout -b feature-a/nick   # Персональна гілка Ніка
   ```
 
-  Merge at will the personal branches to the team-wide branch (see ["Merging"](#merging)).
-  Eventually, the team-wide branch will be merged to "master".
+  Зливайте зміни з *персональних* гілок в одну *спільну* гліку (див. ["Злиття"](#злиття)).
+  Зрештою, спільна гілка буде злита з "master".
 
-* Delete your branch from the upstream repository after it's merged (unless
-  there is a specific reason not to).
+* Видаляйте ваші гілки з репозиторію після того, як вони були злиті (якщо
+  немає важливої причини, аби цього не робити).
 
-  Tip: Use the following command while being on "master", to list merged
-  branches:
+  Порада: Використовуйте команду нижче перебуваючи в "master", щоб вивести злиті гілки:
 
   ```shell
   $ git branch --merged | grep -v "\*"
   ```
 
-## Commits
+## Коміти
 
-* Each commit should be a single *logical change*. Don't make several
-  *logical changes* in one commit. For example, if a patch fixes a bug and
-  optimizes the performance of a feature, split it into two separate commits.
+* Кожен коміт повинен містити одну *логічну зміну*. Не робіть кілька
+  *логічних змін* в одному коміті. Наприклад, якщо ваш патч виправляє помилку
+  та покращує продуктивність, то краще розбити його на два коміти.
 
-* Don't split a single *logical change* into several commits. For example,
-  the implementation of a feature and the corresponding tests should be in the
-  same commit.
+* Не розділяйте одну *логічну зміну* на кілька комітів. Наприклад,
+  реалізація нового функціоналу, та покриття цього функціоналу тестами повинні
+  бути в одному коміті.
 
-* Commit *early* and *often*. Small, self-contained commits are easier to
-  understand and revert when something goes wrong.
+* Комітьте *своєчасно* та *часто*. Маленькі, атомарні коміти легше зрозуміти
+  та відмінити, якщо щось піде не так як слід.
 
-* Commits should be ordered *logically*. For example, if *commit X* depends
-  on changes done in *commit Y*, then *commit Y* should come before *commit X*.
+* Коміти повинні бути *логічно* впорядковані. Наприклад, якщо *коміт X*
+  залежить від зміни в *коміті Y*, тоді *коміт Y* повинен бути перед *комітом X*.
 
-### Messages
+### Повідомлення
 
-* Use the editor, not the terminal, when writing a commit message:
+* Для написання повідомлень використовуйте текстовий редактор замість, замість
+  терміналу:
 
   ```shell
-  # good
+  # добре
   $ git commit
 
-  # bad
+  # погано
   $ git commit -m "Quick fix"
   ```
 
-  Committing from the terminal encourages a mindset of having to fit everything
-  in a single line which usually results in non-informative, ambiguous commit
-  messages.
+  Написання повідомленнь в терміналі змушують писати повідомлення не більш
+  одного рядка, що зазвичай виливається в неінформативні та неоднозначні
+  коміти.
 
-* The summary line (ie. the first line of the message) should be
-  *descriptive* yet *succinct*. Ideally, it should be no longer than
-  *50 characters*. It should be capitalized and written in imperative present
-  tense. It should not end with a period since it is effectively the commit
-  *title*:
-
-  ```shell
-  # good - imperative present tense, capitalized, fewer than 50 characters
-  Mark huge records as obsolete when clearing hinting faults
-
-  # bad
-  fixed ActiveModel::Errors deprecation messages failing when AR was used outside of Rails.
-  ```
-
-* After that should come a blank line followed by a more thorough
-  description. It should be wrapped to *72 characters* and explain *why*
-  the change is needed, *how* it addresses the issue and what *side-effects*
-  it might have.
-
-  It should also provide any pointers to related resources (eg. link to the
-  corresponding issue in a bug tracker):
+* Підсумковий рядок (тобто перший рядок повідомлення) повинен бути
+  *описовим* та *лаконісним*. В ідеалі, воно не повинне займати більш як
+  *50 символів*. Воно повинне починатись з великої літери і бути написаним в
+  теперішньому часі. В кінці повідомлення не варто ставити крапку, адже воно,
+  в деякій міріє *назвою* коміту:
 
   ```shell
-  Short (50 chars or fewer) summary of changes
+  # добре - теперішній час, з великої літери, менш ніж 50 символів
+  Відмічаємо старі записи застарілими для попередження помилок при очищенні
 
-  More detailed explanatory text, if necessary. Wrap it to
-  72 characters. In some contexts, the first
-  line is treated as the subject of an email and the rest of
-  the text as the body.  The blank line separating the
-  summary from the body is critical (unless you omit the body
-  entirely); tools like rebase can get confused if you run
-  the two together.
-
-  Further paragraphs come after blank lines.
-
-  - Bullet points are okay, too
-
-  - Use a hyphen or an asterisk for the bullet,
-    followed by a single space, with blank lines in
-    between
-
-  Source http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html
+  # погано
+  Виправили повідомлення про застарілі ActiveModel::Errors Коли AR були
+  икористані всередині Rails.
   ```
 
-  Ultimately, when writing a commit message, think about what you would need
-  to know if you run across the commit in a year from now.
+* Після цього слід пропустити один рядок та дати повний опис внесених змін.
+  Воно повинне бути обмеженим в *72 символи* та пояснювати *для чого* були
+  потрібні внесені зміни, *як* ці зміни виріщують проблему та які *побічні ефекти* це може мати.
 
-* If a *commit A* depends on another *commit B*, the dependency should be
-  stated in the message of *commit A*. Use the commit's hash when referring to
-  commits.
+  Також в опис слід включити посилання на пов’язані ресурси (напр. посилання на
+  відповідну сторінку помилку в баг-трекері):
 
-  Similarly, if *commit A* solves a bug introduced by *commit B*, it should
-  be stated in the message of *commit A*.
+  ```shell
+  Короткий (50 літер або менше) опис змін.
 
-* If a commit is going to be squashed to another commit use the `--squash` and
-  `--fixup` flags respectively, in order to make the intention clear:
+  Більш детальний роз’яснювальний текст, при потребі. Обмежений
+  72 символами. Часом, перший рядок опису коміту трактується як
+  тема електронного листа, а решту тексту в якості тіла.
+  Порожня лінія-роздільник, що розділяє "тему" та "тіло" необхідна,
+  (якщо тільки ви не пропускаєте "тіло" зовсім), інакше інструменти rebase
+  можуть помилково сприйняти їх як однин рядок.
+
+  Наступні параграфи повинні розділятись порожніми рядкоми.
+
+  - Пункти списку можна використовувати також
+
+  - Використовуйте ненумеровані списки з дефісом, крапкою або зірочкою,
+    в якості роздільника, відділяючи їх від тексту пробілом.
+    Між пунктами списку має бути порожній рядок.
+
+  Сирець: http://tbaggery.com/2008/04/19/a-note-about-git-commit-messages.html
+  ```
+
+  Зрештою, коли писатимете повідомлення до коміту, подумайте про те, що б
+  могло вам знадобитись через рік після коміту.
+
+* Якщо *коміт A* залежить від іншого *коміту Б*, то цю залежність слід вказати
+  в повідомленні до *коміту A*. Використовуйте хеші комітів, щоб посилатись н
+  них.
+
+  Аналогічно, якщо *Коміт A* вирішує проблему в допущену в *коміті Б*, це слід
+  згадати в повідомленні до *коміту А*.
+
+* Якщо коміт потрібно додати до іншого коміту, використовуйте прапорці
+  `--squash` та `--fixup`:
 
   ```shell
   $ git commit --squash f387cab2
   ```
 
-  *(Tip: Use the `--autosquash` flag when rebasing. The marked commits will be
-  squashed automatically.)*
+  *(Порада: Використовуйте прапорець `--autosquash` для переміщення ваших
+  змін. При цьому відмічені коміти будуть злиті автоматично.)*
 
-## Merging
+## Злиття
 
-* **Do not rewrite published history.** The repository's history is valuable in
-  its own right and it is very important to be able to tell *what actually
-  happened*. Altering published history is a common source of problems for
-  anyone working on the project.
+* **Не переписуйте опубліковану історію.** Історія репозиторію дуже важлива,
+  адже вона дозволяє зрозуміти *що насправді відбулось*. Зміна опублікованої
+  історії може мати обернутись великими проблемами для всіх, хто працює з цим
+  репозиторієм.
 
-* However, there are cases where rewriting history is legitimate. These are
-  when:
+* Однак, бувають випадки, коли переписування історії цілком обґрунтоване.
+  Це випадки коли:
 
-  * You are the only one working on the branch and it is not being reviewed.
+  * Ви одні працюєте над поточною гілкою і ваш код не проходить рев’ю.
 
-  * You want to tidy up your branch (eg. squash commits) and/or rebase it onto
-    the "master" in order to merge it later.
+  * Вам потрібно "прибрати" в своїй гілці (напр. об’єднати кілька комітів)
+    та/або перемістити зміни в "master", щоб пізніше їх злити.
 
-  That said, *never rewrite the history of the "master" branch* or any other
-  special branches (ie. used by production or CI servers).
+  Це означає, *ніколи не переписуйте гілку "master"* або інші спеціальні гілки
+  (напр. ті які використовуються на продакшені, або  CI-серверами).
 
-* Keep the history *clean* and *simple*. *Just before you merge* your branch:
+* Зберігайте історію *чистою* та *простою*. *Перед злиттям* вашої гілки:
 
-    1. Make sure it conforms to the style guide and perform any needed actions
-       if it doesn't (squash/reorder commits, reword messages etc.)
+    1. Переконайтесь, що зміни відповідають цьому керівництву, якщо вони не
+       відповідають, то виправте це (об’єднайте коміти, змініть їх порядок,
+       переформулюйте їх повідомленя та ніше.)
 
-    2. Rebase it onto the branch it's going to be merged to:
+    2. Перемістіть зміни в гілку, в яку їх потрібно внести:
 
        ```shell
        [my-branch] $ git fetch
        [my-branch] $ git rebase origin/master
-       # then merge
+       # тільки після цього об’єднуйте
        ```
 
-       This results in a branch that can be applied directly to the end of the
-       "master" branch and results in a very simple history.
+       Ці команди створюють гілку, яку можна приєднати в кінець "master", що
+       значно спрощує історію комітів.
 
-       *(Note: This strategy is better suited for projects with short-running
-       branches. Otherwise it might be better to occassionally merge the
-       "master" branch instead of rebasing onto it.)*
+       *(Примітка: Цей спосіб краще використовувати в проектах з відносно
+       короткими гілками. В іншому випадку краще було б просто провести злиття
+       гілок.)*
 
-* If your branch includes more than one commit, do not merge with a
-  fast-forward:
+* Якщо ваша гілка включає більше як один коміт, не варто проводити автоматичне зливання (з fast-forward):
 
   ```shell
-  # good - ensures that a merge commit is created
+  # добре - коміт зі злиттям буде створено
   $ git merge --no-ff my-branch
 
-  # bad
+  # погано
   $ git merge my-branch
   ```
 
-## Misc.
+## Інше.
 
-* There are various workflows and each one has its strengths and weaknesses.
-  Whether a workflow fits your case, depends on the team, the project and your
-  development procedures.
+* Є багато різних способів організації командної роботи і в кожного є свої
+  переваги та недоліки.
+  Який спосіб підійде саме вам, залежить від команди, проекту і процесу
+  розробки.
 
-  That said, it is important to actually *choose* a workflow and stick with it.
+  Це означає, що найважливіше — *обрати* спосіб організації та дотримуватись
+  його.
 
-* *Be consistent.* This is related to the workflow but also expands to things
-  like commit messages, branch names and tags. Having a consistent style
-  throughout the repository makes it easy to understand what is going on by
-  looking at the log, a commit message etc.
+* *Будьте послідовними.* Це стосується не лише способу організації, але й
+  таких речей, як повідомлення комітів, назви гілок та тегів. Дотримуйтесь
+  обраного стилю у всьому репозиторії, оскільки це покращує розуміння того, що
+  відбувається в історії, в повідомленнях комітів та в іншому.
 
-* *Test before you push.* Do not push half-done work.
+* *Тестуйте перед пушем.* Не надсилайте в репозиторій напівготові зміни.
 
-* Use [annotated tags](http://git-scm.com/book/en/v2/Git-Basics-Tagging#Annotated-Tags)
-  for marking releases or other important points in the history. Prefer
-  [lightweight tags](http://git-scm.com/book/en/v2/Git-Basics-Tagging#Lightweight-Tags)
-  for personal use, such as to bookmark commits for future reference.
+* Використовуйте [анотовані мітки](http://git-scm.com/book/en/v2/Git-Basics-Tagging#Annotated-Tags)
+  щоб відмітити релізи або інші важливі точки в історії змін проекту.
+  Надавайте перевагу [підписаним міткам](http://git-scm.com/book/en/v2/Git-Basics-Tagging#Lightweight-Tags) для особистого використання, як от в якості
+  закладок для комітів.
 
-* Keep your repositories at a good shape by performing maintenance tasks
-  occasionally, in your local *and* remote repositories:
+* Тримайте ваш локальний *та* віддалений репозиторій в хорошому стані з
+  допомогою команд:
 
   * [`git-gc(1)`](http://git-scm.com/docs/git-gc)
   * [`git-prune(1)`](http://git-scm.com/docs/git-prune)
   * [`git-fsck(1)`](http://git-scm.com/docs/git-fsck)
 
-# License
+# Ліцензія
 
 ![cc license](http://i.creativecommons.org/l/by/4.0/88x31.png)
 
-This work is licensed under a Creative Commons Attribution 4.0
+Ця робота ліцензується під Creative Commons Attribution 4.0
 International license.
 
-# Credits
+# Авторcьке право
 
 Agis Anastasopoulos / [@agisanast](https://twitter.com/agisanast) / http://agis.io
+
+# Переклад
+
+Денис Довгань (Denys Dovhan) / [@denysdovhan](https://twitter.com/denysdovhan) / [www.denysdovhan.com](http://www.denysdovhan.com)
+
