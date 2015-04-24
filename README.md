@@ -7,9 +7,10 @@
 * [Англійська](https://github.com/agis-/git-style-guide)
 * [Китайська (Спрощена)](https://github.com/aseaday/git-style-guide)
 * [Китайська (Традиційна)](https://github.com/JuanitoFatas/git-style-guide)
-* [Японська](https://github.com/objectx/git-style-guide)
 * [Корейська](https://github.com/ikaruce/git-style-guide)
 * [Португальська](https://github.com/guylhermetabosa/git-style-guide)
+* [Французька](https://github.com/pierreroth64/git-style-guide)
+* [Японська](https://github.com/objectx/git-style-guide)
 
 Якщо хочете зробити переклад, зробіть його! Форкніть проект та відкрийте pull-request!
 
